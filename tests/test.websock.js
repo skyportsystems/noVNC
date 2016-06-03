@@ -173,6 +173,7 @@ describe('Websock', function() {
             it('should actually send on the websocket if the websocket does not have too much buffered', function () {
                 sock.maxBufferedAmount = 10;
                 sock._websocket.bufferedAmount = 8;
+                sock._websocket.readyState = WebSocket.OPEN
                 sock._sQ = new Uint8Array([1, 2, 3]);
                 sock._sQlen = 3;
                 var encoded = sock._encode_message();
@@ -402,6 +403,20 @@ describe('Websock', function() {
             sock._recv_message(msg);
             expect(sock._rQlen).to.equal(3);
             expect(sock.get_rQi()).to.equal(0);
+        });
+
+        it('should automatically resize the receive queue if the incoming message is too large', function () {
+            sock._rQ = new Uint8Array(20);
+            sock._rQlen = 0;
+            sock.set_rQi(0);
+            sock._rQbufferSize = 20;
+            sock._rQmax = 2;
+            var msg = { data: new Uint8Array(30).buffer };
+            sock._mode = 'binary';
+            sock._recv_message(msg);
+            expect(sock._rQlen).to.equal(30);
+            expect(sock.get_rQi()).to.equal(0);
+            expect(sock._rQ.length).to.equal(240);  // keep the invariant that rQbufferSize / 8 >= rQlen
         });
 
         it('should call the error event handler on an exception', function () {
