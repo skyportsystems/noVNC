@@ -5,5 +5,5 @@ utils/rebind.so
 utils/websockify
 node_modules
 build
-lib
+#lib
 recordings
