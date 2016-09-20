@@ -1,5 +1,5 @@
-app
-core
+#app
+#core
 favicon.ico
 .gitmodules
 node_modules
@@ -9,7 +9,7 @@ node_modules
 *.swo
 tests
 .travis.yml
-utils
+#utils
 docs/notes
 docs/links
 docs/release.txt
