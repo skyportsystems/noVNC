@@ -55,19 +55,19 @@
         // Psuedo-encoding settings
 
         //['JPEG_quality_lo',     -32 ],
-        ['JPEG_quality_med',      -26 ],
+        //['JPEG_quality_med',      -26 ],
         //['JPEG_quality_hi',     -23 ],
         //['compress_lo',        -255 ],
-        ['compress_hi',          -247 ],
+        //['compress_hi',          -247 ],
 
         ['DesktopSize',          -223 ],
         ['last_rect',            -224 ],
         ['Cursor',               -239 ],
         ['QEMUExtendedKeyEvent', -258 ],
-        ['ExtendedDesktopSize',  -308 ],
-        ['xvp',                  -309 ],
-        ['Fence',                -312 ],
-        ['ContinuousUpdates',    -313 ]
+        ['ExtendedDesktopSize',  -308 ]
+        //['xvp',                  -309 ], // None of these have actually been implemented. Advertising this to
+        //['Fence',                -312 ], // a VNC server that supports these extensions results in immediate
+        //['ContinuousUpdates',    -313 ]  // acknowledgement as pseudo-encoded rectangles and desyncing the client.
     ];
 
     this._encHandlers = {};
