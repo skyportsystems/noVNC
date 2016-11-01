@@ -1149,6 +1149,18 @@
             return true;
         },
 
+        _check_draw_completed: function () {
+                if (this._display._renderQ.length == 0) {
+                        RFB.messages.fbUpdateRequests(this._sock,
+                                                      this._enabledContinuousUpdates,
+                                                      this._display.getCleanDirtyReset(),
+                                                      this._fb_width, this._fb_height);
+
+                        return;
+                }
+                requestAnimationFrame(this._check_draw_completed.bind(this));
+        },
+
         _normal_msg: function () {
             var msg_type;
 
@@ -1162,10 +1174,7 @@
                 case 0:  // FramebufferUpdate
                     var ret = this._framebufferUpdate();
                     if (ret) {
-                        RFB.messages.fbUpdateRequests(this._sock,
-                                                      this._enabledContinuousUpdates,
-                                                      this._display.getCleanDirtyReset(),
-                                                      this._fb_width, this._fb_height);
+			 this._check_draw_completed();
                     }
                     return ret;
 
