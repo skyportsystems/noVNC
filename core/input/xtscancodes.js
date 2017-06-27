@@ -1,4 +1,4 @@
-var XtScancode = {
+export default {
     "Escape": 0x0001,
     "Digit1": 0x0002,
     "Digit2": 0x0003,
@@ -110,8 +110,8 @@ var XtScancode = {
     "PageDown": 0xE051,
     "Insert": 0xE052,
     "Delete": 0xE053,
-    "OSLeft": 0xE05B,
-    "OSRight": 0xE05C,
+    "MetaLeft": 0xE05B,
+    "MetaRight": 0xE05C,
     "ContextMenu": 0xE05D,
     "BrowserSearch": 0xE065,
     "BrowserFavorites": 0xE066,
@@ -145,5 +145,3 @@ var XtScancode = {
     "LaunchMail": 0xE06C,
     "MediaSelect": 0xE06D,
 };
-
-/* [module] export default XtScancode */

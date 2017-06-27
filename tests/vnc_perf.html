@@ -37,8 +37,6 @@
 
     <script type="text/javascript">
         var INCLUDE_URI= "../";
-        // TODO: Data file should override
-        var VNC_frame_encoding = "binary";
     </script>
     <script src="../core/util.js"></script>
     <script src="../app/webutil.js"></script>
@@ -52,7 +50,8 @@
             WebUtil.load_scripts({
                 'core': ["base64.js", "websock.js", "des.js", "input/keysym.js",
                          "input/keysymdef.js", "input/xtscancodes.js", "input/util.js",
-                         "input/devices.js", "display.js", "rfb.js", "inflator.js"],
+                         "input/devices.js", "display.js", "rfb.js", "inflator.js",
+                         "input/vkeys.js", "input/fixedkeys.js"],
                 'tests': ["playback.js"],
                 'recordings': [fname]});
         } else {
@@ -67,7 +66,7 @@
         function msg(str) {
             console.log(str);
             var cell = document.getElementById('messages');
-            cell.innerHTML += str + "\n";
+            cell.textContent += str + "\n";
             cell.scrollTop = cell.scrollHeight;
         }
         function dbgmsg(str) {
@@ -76,23 +75,18 @@
             }
         }
 
-        updateState = function (rfb, state, oldstate, mesg) {
-            switch (state) {
-                case 'failed':
-                case 'fatal':
-                    msg("noVNC sent '" + state +
-                        "' state during pass " + pass +
-                        ", iteration " + iteration +
-                        " frame " + frame_idx);
-                    test_state = 'failed';
-                    break;
-                case 'loaded':
-                    document.getElementById('startButton').disabled = false;
-                    break;
+        disconnected = function (rfb, reason) {
+            if (reason) {
+                msg("noVNC sent '" + state +
+                    "' state during pass " + pass +
+                    ", iteration " + iteration +
+                    " frame " + frame_idx);
+                test_state = 'failed';
             }
-            if (typeof mesg !== 'undefined') {
-                document.getElementById('VNC_status').innerHTML = mesg;
-            }
+        }
+
+        notification = function (rfb, mesg, level, options) {
+            document.getElementById('VNC_status').textContent = mesg;
         }
 
         function do_test() {

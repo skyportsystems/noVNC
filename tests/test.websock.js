@@ -1,8 +1,14 @@
-// requires local modules: websock, util
-// requires test modules: fake.websocket, assertions
 /* jshint expr: true */
 var assert = chai.assert;
 var expect = chai.expect;
+
+import Websock from '../core/websock.js';
+import FakeWebSocket from './fake.websocket.js';
+
+import './assertions';
+import 'sinon';
+import sinonChai from '../node_modules/sinon-chai/lib/sinon-chai.js';
+chai.use(sinonChai);
 
 describe('Websock', function() {
     "use strict";
@@ -170,8 +176,7 @@ describe('Websock', function() {
                 };
             });
 
-            it('should actually send on the websocket if the websocket does not have too much buffered', function () {
-                sock.maxBufferedAmount = 10;
+            it('should actually send on the websocket', function () {
                 sock._websocket.bufferedAmount = 8;
                 sock._websocket.readyState = WebSocket.OPEN
                 sock._sQ = new Uint8Array([1, 2, 3]);
@@ -183,29 +188,13 @@ describe('Websock', function() {
                 expect(sock._websocket.send).to.have.been.calledWith(encoded);
             });
 
-            it('should return true if the websocket did not have too much buffered', function () {
-                sock.maxBufferedAmount = 10;
-                sock._websocket.bufferedAmount = 8;
-
-                expect(sock.flush()).to.be.true;
-            });
-
             it('should not call send if we do not have anything queued up', function () {
                 sock._sQlen = 0;
-                sock.maxBufferedAmount = 10;
                 sock._websocket.bufferedAmount = 8;
 
                 sock.flush();
 
                 expect(sock._websocket.send).not.to.have.been.called;
-            });
-
-            it('should not send and return false if the websocket has too much buffered', function () {
-                sock.maxBufferedAmount = 10;
-                sock._websocket.bufferedAmount = 12;
-
-                expect(sock.flush()).to.be.false;
-                expect(sock._websocket.send).to.not.have.been.called;
             });
         });
 
@@ -266,10 +255,6 @@ describe('Websock', function() {
                 expect(WebSocket).to.have.been.calledWith('ws://localhost:8675', 'binary');
             });
 
-            it('should fail if we specify a protocol besides binary', function () {
-                expect(function () { sock.open('ws:///', 'base64'); }).to.throw(Error);
-            });
-
             // it('should initialize the event handlers')?
         });
 
@@ -327,17 +312,6 @@ describe('Websock', function() {
             it('should call _recv_message on a message', function () {
                 sock._websocket.onmessage(null);
                 expect(sock._recv_message).to.have.been.calledOnce;
-            });
-
-            it('should fail if a protocol besides binary is requested', function () {
-                sock._websocket.protocol = 'base64';
-                expect(sock._websocket.onopen).to.throw(Error);
-            });
-
-            it('should assume binary if no protocol was available on opening', function () {
-                sock._websocket.protocol = null;
-                sock._websocket.onopen();
-                expect(sock._mode).to.equal('binary');
             });
 
             it('should call the open event handler on opening', function () {
